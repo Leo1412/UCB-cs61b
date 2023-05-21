@@ -84,6 +84,7 @@ public class IntList {
         IntList AList = A;
         if (A == null) {
             A = B;
+            return A;
         }
         else if (B == null) {
             //do nothing.
