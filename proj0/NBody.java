@@ -29,7 +29,6 @@ public class NBody {
             double yVel = in.readDouble(); 
             double m = in.readDouble();
             String imgName = in.readString();
-            imgName = "images/" + imgName;
             Planet planet = new Planet(xPos, yPos, xVel, yVel, m, imgName);
             planetList[count] = planet;
             count += 1; 
@@ -94,10 +93,9 @@ public class NBody {
         StdOut.printf("%d\n", planets.length);
         StdOut.printf("%.2e\n", radius);
         for (int i = 0; i < planets.length; i++) {
-            File f = new File(planets[i].imgFileName);
             StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
                   planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
-                  planets[i].yyVel, planets[i].mass, f.getName());   
+                  planets[i].yyVel, planets[i].mass, planets[i].imgFileName);   
         }
 
     }

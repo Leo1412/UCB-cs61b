@@ -1,14 +1,14 @@
 import java.lang.Math;
 
 public class Planet {
-    double xxPos;   //current x position
-    double yyPos;   //current y position
-    double xxVel;   //current velocity in x direction
-    double yyVel;   //current velocity in y direction
-    double mass;    //mass of the planet
-    String imgFileName; //The name of the file that corresponds to the image that depicts the planet
+    public double xxPos;   //current x position
+    public double yyPos;   //current y position
+    public double xxVel;   //current velocity in x direction
+    public double yyVel;   //current velocity in y direction
+    public double mass;    //mass of the planet
+    public String imgFileName; //The name of the file that corresponds to the image that depicts the planet
 
-    final static double G = 6.67e-11;
+    private static final double G = 6.67e-11;
 
     public Planet (double xP, double yP, double xV, double yV, double m, String img) {
         xxPos = xP;
@@ -98,6 +98,6 @@ public class Planet {
 
     //use the StdDraw API to draw the planet.
     public void draw() {
-        StdDraw.picture(xxPos, yyPos, imgFileName);
+        StdDraw.picture(xxPos, yyPos, "images/" + imgFileName);
     }
 }
