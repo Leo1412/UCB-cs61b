@@ -5,7 +5,7 @@ public class LinkedListDeque<T> {
 
 
     //class IntNode
-    public class IntNode {
+    private class IntNode {
         public IntNode prev;
         public T item;
         public IntNode next;
@@ -24,11 +24,14 @@ public class LinkedListDeque<T> {
         size = 0;
     }
 
+
     //a copy constructor
     public LinkedListDeque(LinkedListDeque another) {
         sentinel = another.sentinel;
         size = another.size;
     }
+
+
 
     public void addFirst(T item) {
         if (sentinel.next == null) {
@@ -37,7 +40,9 @@ public class LinkedListDeque<T> {
             sentinel.prev = new_node;
         }
         else {
-            sentinel.next = new IntNode(sentinel, item, sentinel.next);
+            IntNode new_node = new IntNode(sentinel, item, sentinel.next);
+            sentinel.next.prev = new_node;
+            sentinel.next = new_node;
         }
         size += 1;
     }
@@ -49,7 +54,9 @@ public class LinkedListDeque<T> {
             sentinel.prev = new_node;
         }
         else {
-            sentinel.prev = new IntNode(sentinel.prev, item, sentinel);
+            IntNode new_node = new IntNode(sentinel.prev, item, sentinel);
+            sentinel.prev.next = new_node;
+            sentinel.prev = new_node;
         }
         size += 1;
     }
@@ -67,10 +74,15 @@ public class LinkedListDeque<T> {
     //print all items in the deque.
     public void printDeque() {
         IntNode testNode = sentinel;
+        if(size == 0) {
+            System.out.println("");
+        }
+        else {
         while(testNode.next != sentinel) {
             testNode = testNode.next;
             System.out.print(testNode.item);
             System.out.print(" ");
+        }
         }
     }
 
@@ -107,6 +119,7 @@ public class LinkedListDeque<T> {
         else {
             size -= 1;
             T lastItem = sentinel.prev.item;
+            sentinel.prev.prev.next = sentinel;
             sentinel.prev = sentinel.prev.prev;
             return lastItem;
         }
@@ -127,6 +140,10 @@ public class LinkedListDeque<T> {
         return null;
     }
 
+
+
+
+    //problems remain.
     //get the ith item using recursion
     public T getRecursive(int index) {
         if (index == 0) {
@@ -136,9 +153,12 @@ public class LinkedListDeque<T> {
             return null;
         }
 
+
         //make a copy of the current object
         LinkedListDeque<T> tempLLDeque = new LinkedListDeque<>(this);
         tempLLDeque.removeFirst();
         return tempLLDeque.getRecursive(size - 1);
+
+
     }
 }
