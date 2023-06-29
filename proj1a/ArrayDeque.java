@@ -108,6 +108,10 @@ public class ArrayDeque<T> {
 
     //need to shrink the array if a lot of space is unused..........
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
+
         T firstItem = items[nextFirst + 1];
         if (nextFirst == (items.length - 1)) {
             nextFirst = 0;
@@ -123,6 +127,10 @@ public class ArrayDeque<T> {
     }
 
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
+
         T lastItem = items[nextLast - 1];
         if (nextLast == 0) {
             nextLast = (items.length - 1);
