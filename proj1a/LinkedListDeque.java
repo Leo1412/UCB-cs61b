@@ -16,7 +16,6 @@ public class LinkedListDeque<T> {
         }
     }
 
-
     //constructor 
     public LinkedListDeque() {
         //create an empty LinkedListDeque
@@ -70,11 +69,11 @@ public class LinkedListDeque<T> {
             System.out.println("");
         }
         else {
-        while(testNode.next != sentinel) {
-            testNode = testNode.next;
-            System.out.print(testNode.item);
-            System.out.print(" ");
-        }
+            while(testNode.next != sentinel) {
+                testNode = testNode.next;
+                System.out.print(testNode.item);
+                System.out.print(" ");
+            }
         }
     }
 
@@ -101,17 +100,18 @@ public class LinkedListDeque<T> {
         if (size == 0) {
             return null;
         }
+        else if (size == 1) {
+            size -= 1;
+            T lastItem = sentinel.prev.item;
+            sentinel.next = null;
+            sentinel.prev = null;
+            return lastItem;
+        }
         else {
             size -= 1;
             T lastItem = sentinel.prev.item;
-            if (size == 1) {
-                sentinel.next = null;
-                sentinel.prev = null;
-            }
-            else {
-                sentinel.prev.prev.next = sentinel;
-                sentinel.prev = sentinel.prev.prev;
-            }
+            sentinel.prev.prev.next = sentinel;
+            sentinel.prev = sentinel.prev.prev;
             return lastItem;
         }
     }
