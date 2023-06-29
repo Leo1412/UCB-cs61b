@@ -87,14 +87,21 @@ public class ArrayDeque<T> {
 
     //print the Deque in the conceptual order (not the order of the array!!)
     public void printDeque() {
-        for (int i = (nextFirst + 1); i < items.length; i += 1) {
-            System.out.print(items[i]);
-            System.out.print(" ");
+        if ((nextFirst + size) > (items.length - 1)) {
+            for (int i = (nextFirst + 1); i < items.length; i += 1) {
+                System.out.print(items[i]);
+                System.out.print(" ");
+            }
+            for (int j = 0; j < nextLast; j += 1) {
+                System.out.print(items[j]);
+                System.out.print(" ");
         }
-
-        for (int j = 0; j < nextLast; j += 1) {
-            System.out.print(items[j]);
-            System.out.print(" ");
+        }
+        else {
+            for (int i = (nextFirst + 1); i <= (nextFirst + size); i += 1) {
+                System.out.print(items[i]);
+                System.out.print(" ");
+            }
         }
     }
 
@@ -104,13 +111,12 @@ public class ArrayDeque<T> {
         T firstItem = items[nextFirst + 1];
         if (nextFirst == (items.length - 1)) {
             nextFirst = 0;
-        }
-        else {
+        } else {
             nextFirst += 1;
         }
         size -= 1;
         //ensure efficient usage of the array
-        if((items.length > 15) && (items.length > (4 * size))) {
+        if ((items.length > 15) && (items.length > (4 * size))) {
             resize_d();
         }
         return firstItem;
@@ -120,19 +126,22 @@ public class ArrayDeque<T> {
         T lastItem = items[nextLast - 1];
         if (nextLast == 0) {
             nextLast = (items.length - 1);
-        }
-        else {
+        } else {
             nextLast -= 1;
         }
         size -= 1;
         //ensure efficient usage of the array
-        if((items.length > 15) && (items.length > (4 * size))) {
+        if ((items.length > 15) && (items.length > (4 * size))) {
             resize_d();
         }
         return lastItem;
     }
 
     public T get(int index) {
-        return items[index];
+        if ((nextFirst + 1 + index) <= (items.length - 1)) {
+            return items[nextFirst + 1 + index];
+        } else {
+            return items[nextFirst + 1 + index - (items.length - 1) - 1];
+        }
     }
 }
