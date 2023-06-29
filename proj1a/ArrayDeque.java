@@ -18,7 +18,7 @@ public class ArrayDeque<T> {
         int increase = capacity - size;
         T[] a = (T[]) new Object[capacity];
         System.arraycopy(items, 0, a, 0, nextLast);
-        System.arraycopy(items, nextLast + increase, a, nextLast, size - nextLast);
+        System.arraycopy(items, nextLast, a, nextLast + increase, size - nextLast);
         items = a;
     }
 
