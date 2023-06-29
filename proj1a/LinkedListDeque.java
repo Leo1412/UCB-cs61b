@@ -25,14 +25,6 @@ public class LinkedListDeque<T> {
     }
 
 
-    //a copy constructor
-    public LinkedListDeque(LinkedListDeque another) {
-        sentinel = another.sentinel;
-        size = another.size;
-    }
-
-
-
     public void addFirst(T item) {
         if (sentinel.next == null) {
             IntNode new_node = new IntNode(sentinel, item, sentinel);
@@ -109,18 +101,17 @@ public class LinkedListDeque<T> {
         if (size == 0) {
             return null;
         }
-        else if (size == 1) {
-            size -= 1;
-            T lastItem = sentinel.prev.item;
-            sentinel.next = null;
-            sentinel.prev = null;
-            return lastItem;
-        }
         else {
             size -= 1;
             T lastItem = sentinel.prev.item;
-            sentinel.prev.prev.next = sentinel;
-            sentinel.prev = sentinel.prev.prev;
+            if (size == 1) {
+                sentinel.next = null;
+                sentinel.prev = null;
+            }
+            else {
+                sentinel.prev.prev.next = sentinel;
+                sentinel.prev = sentinel.prev.prev;
+            }
             return lastItem;
         }
     }
@@ -141,24 +132,19 @@ public class LinkedListDeque<T> {
     }
 
 
-
-
-    //problems remain.
     //get the ith item using recursion
     public T getRecursive(int index) {
+        if (index > (size - 1)) {
+            return null;
+        }
         if (index == 0) {
             return sentinel.next.item;
         }
-        if (index > (size -1)) {
-            return null;
-        }
-
 
         //make a copy of the current object
-        LinkedListDeque<T> tempLLDeque = new LinkedListDeque<>(this);
-        tempLLDeque.removeFirst();
-        return tempLLDeque.getRecursive(size - 1);
-
-
+        LinkedListDeque<T> tempLLDeque = new LinkedListDeque<>();
+        tempLLDeque.size = size - 1;
+        tempLLDeque.sentinel.next = sentinel.next.next;
+        return tempLLDeque.getRecursive(index - 1);
     }
 }
