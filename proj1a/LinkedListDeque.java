@@ -6,10 +6,10 @@ public class LinkedListDeque<T> {
 
     //class IntNode
     private class IntNode {
-        public IntNode prev;
-        public T item;
-        public IntNode next;
-        public IntNode(IntNode p, T i, IntNode n) {
+        private IntNode prev;
+        private T item;
+        private IntNode next;
+        private IntNode(IntNode p, T i, IntNode n) {
             prev = p;
             item = i;
             next = n;
@@ -26,35 +26,34 @@ public class LinkedListDeque<T> {
 
     public void addFirst(T item) {
         if (sentinel.next == null) {
-            IntNode new_node = new IntNode(sentinel, item, sentinel);
-            sentinel.next = new_node;
-            sentinel.prev = new_node;
-        }
-        else {
-            IntNode new_node = new IntNode(sentinel, item, sentinel.next);
-            sentinel.next.prev = new_node;
-            sentinel.next = new_node;
+            IntNode newNode = new IntNode(sentinel, item, sentinel);
+            sentinel.next = newNode;
+            sentinel.prev = newNode;
+        } else {
+            IntNode newNode = new IntNode(sentinel, item, sentinel.next);
+            sentinel.next.prev = newNode;
+            sentinel.next = newNode;
         }
         size += 1;
     }
 
     public void addLast(T item) {
         if (sentinel.prev == null) {
-            IntNode new_node = new IntNode(sentinel, item, sentinel);
-            sentinel.next = new_node;
-            sentinel.prev = new_node;
-        }
-        else {
-            IntNode new_node = new IntNode(sentinel.prev, item, sentinel);
-            sentinel.prev.next = new_node;
-            sentinel.prev = new_node;
+            IntNode newNode = new IntNode(sentinel, item, sentinel);
+            sentinel.next = newNode;
+            sentinel.prev = newNode;
+        } else {
+            IntNode newNode = new IntNode(sentinel.prev, item, sentinel);
+            sentinel.prev.next = newNode;
+            sentinel.prev = newNode;
         }
         size += 1;
     }
 
     public boolean isEmpty() {
-        if (size == 0)
-             return true;
+        if (size == 0) {
+            return true;
+        }
         return false;
     }
 
@@ -65,11 +64,10 @@ public class LinkedListDeque<T> {
     //print all items in the deque.
     public void printDeque() {
         IntNode testNode = sentinel;
-        if(size == 0) {
+        if (size == 0) {
             System.out.println("");
-        }
-        else {
-            while(testNode.next != sentinel) {
+        } else {
+            while (testNode.next != sentinel) {
                 testNode = testNode.next;
                 System.out.print(testNode.item);
                 System.out.print(" ");
@@ -80,17 +78,16 @@ public class LinkedListDeque<T> {
     public T removeFirst() {
         if (size == 0) {
             return null;
-        }
-        else if (size == 1) {
+        } else if (size == 1) {
             size -= 1;
             T firstItem = sentinel.next.item;
             sentinel.next = null;
             sentinel.prev = null;
             return firstItem;
-        }
-        else {
+        } else {
             size -= 1;
             T firstItem = sentinel.next.item;
+            sentinel.next.next.prev = sentinel;
             sentinel.next = sentinel.next.next;
             return firstItem;
         }
@@ -99,15 +96,13 @@ public class LinkedListDeque<T> {
     public T removeLast() {
         if (size == 0) {
             return null;
-        }
-        else if (size == 1) {
+        } else if (size == 1) {
             size -= 1;
             T lastItem = sentinel.prev.item;
             sentinel.next = null;
             sentinel.prev = null;
             return lastItem;
-        }
-        else {
+        } else {
             size -= 1;
             T lastItem = sentinel.prev.item;
             sentinel.prev.prev.next = sentinel;
@@ -121,7 +116,7 @@ public class LinkedListDeque<T> {
         IntNode testNode = sentinel;
         int count = 0;
 
-        while(testNode.next != sentinel) {
+        while (testNode.next != sentinel) {
             testNode = testNode.next;
             if (count == index) {
                 return testNode.item;
