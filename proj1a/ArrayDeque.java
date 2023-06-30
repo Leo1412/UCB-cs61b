@@ -132,11 +132,13 @@ public class ArrayDeque<T> {
             return null;
         }
 
-        T lastItem = items[nextLast - 1];
+        T lastItem;
         if (nextLast == 0) {
             nextLast = (items.length - 1);
+            lastItem = items[nextLast];
         } else {
             nextLast -= 1;
+            lastItem = items[nextLast];
         }
         size -= 1;
         //ensure efficient usage of the array
