@@ -21,7 +21,7 @@ public class Palindrome {
     }
 
     //helper function to convert Deque<Character> into a string
-    public String d2s(Deque inDeque) {
+    private String d2s(Deque inDeque) {
         String word = "";
         int dequeSize = inDeque.size();
         for (int i = 0; i < dequeSize; i++) {
@@ -35,11 +35,10 @@ public class Palindrome {
             return true;
         }
         Deque<Character> wordDeque = wordToDeque(word);
-        CharacterComparator charComp = new OffByOne();
         String backWord = "";
         char firstChar = wordDeque.removeFirst();
         char lastChar = wordDeque.removeLast();
-        if (charComp.equalChars(firstChar, lastChar)) {
+        if (cc.equalChars(firstChar, lastChar)) {
             return isPalindrome(d2s(wordDeque), cc);
         } else {
             return false;

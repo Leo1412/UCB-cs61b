@@ -34,13 +34,6 @@ public class TestPalindrome {
     }
 
     @Test
-    public void testD2S() {
-        String word = "leolllll";
-        Deque<Character> wordDeque = palindrome.wordToDeque(word);
-        System.out.println(palindrome.d2s(wordDeque));
-    }
-
-    @Test
     public void isPalindromeCharacterComparator() {
         CharacterComparator testCharComp = new OffByOne();
         assertFalse(palindrome.isPalindrome("racecar", testCharComp));
@@ -49,5 +42,11 @@ public class TestPalindrome {
         assertTrue(palindrome.isPalindrome("eghf", testCharComp));
         assertTrue(palindrome.isPalindrome("L"));
         assertTrue(palindrome.isPalindrome(""));
+    }
+
+    @Test
+    public void furtherCharacterComparator() {
+        CharacterComparator testCharComp = new OffByN(5);
+        assertTrue(palindrome.isPalindrome("binding", testCharComp));
     }
 }
