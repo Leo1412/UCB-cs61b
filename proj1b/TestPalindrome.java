@@ -2,7 +2,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestPalindrome {
-    /*// You must use this palindrome, and not instantiate
+    // You must use this palindrome, and not instantiate
     // new Palindromes, or the autograder might be upset.
     static Palindrome palindrome = new Palindrome();
 
@@ -14,5 +14,40 @@ public class TestPalindrome {
             actual += d.removeFirst();
         }
         assertEquals("persiflage", actual);
-    } Uncomment this class once you've created your Palindrome class. */
+    }
+
+    @Test
+    public void testIsPalindrome() {
+        assertTrue(palindrome.isPalindrome("racecar"));
+        assertTrue(palindrome.isPalindrome("oo"));
+        assertFalse(palindrome.isPalindrome("tyler"));
+        assertFalse(palindrome.isPalindrome("durden"));
+        assertTrue(palindrome.isPalindrome("L"));
+        assertTrue(palindrome.isPalindrome(""));
+    }
+
+    @Test
+    public void test() {
+        String word = "llllol";
+        Deque<Character> wordDeque = palindrome.wordToDeque(word);
+        System.out.print(wordDeque.toString());
+    }
+
+    @Test
+    public void testD2S() {
+        String word = "leolllll";
+        Deque<Character> wordDeque = palindrome.wordToDeque(word);
+        System.out.println(palindrome.d2s(wordDeque));
+    }
+
+    @Test
+    public void isPalindromeCharacterComparator() {
+        CharacterComparator testCharComp = new OffByOne();
+        assertFalse(palindrome.isPalindrome("racecar", testCharComp));
+        assertFalse(palindrome.isPalindrome("noon", testCharComp));
+        assertTrue(palindrome.isPalindrome("flake", testCharComp));
+        assertTrue(palindrome.isPalindrome("eghf", testCharComp));
+        assertTrue(palindrome.isPalindrome("L"));
+        assertTrue(palindrome.isPalindrome(""));
+    }
 }
