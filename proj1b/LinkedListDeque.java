@@ -1,0 +1,154 @@
+public class LinkedListDeque<T> implements Deque<T> {
+    //use the circular sentinel node approach for implementation
+    private IntNode sentinel;
+    private int size;
+
+
+    //class IntNode
+    private class IntNode {
+        private IntNode prev;
+        private T item;
+        private IntNode next;
+        private IntNode(IntNode p, T i, IntNode n) {
+            prev = p;
+            item = i;
+            next = n;
+        }
+    }
+
+    //constructor
+    public LinkedListDeque() {
+        //create an empty LinkedListDeque
+        sentinel = new IntNode(sentinel, null, sentinel);
+        size = 0;
+    }
+
+
+    @Override
+    public void addFirst(T item) {
+        if (sentinel.next == null) {
+            IntNode newNode = new IntNode(sentinel, item, sentinel);
+            sentinel.next = newNode;
+            sentinel.prev = newNode;
+        } else {
+            IntNode newNode = new IntNode(sentinel, item, sentinel.next);
+            sentinel.next.prev = newNode;
+            sentinel.next = newNode;
+        }
+        size += 1;
+    }
+
+    @Override
+    public void addLast(T item) {
+        if (sentinel.prev == null) {
+            IntNode newNode = new IntNode(sentinel, item, sentinel);
+            sentinel.next = newNode;
+            sentinel.prev = newNode;
+        } else {
+            IntNode newNode = new IntNode(sentinel.prev, item, sentinel);
+            sentinel.prev.next = newNode;
+            sentinel.prev = newNode;
+        }
+        size += 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        if (size == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+
+    @Override
+    //print all items in the deque.
+    public void printDeque() {
+        IntNode testNode = sentinel;
+        if (size == 0) {
+            System.out.println("");
+        } else {
+            while (testNode.next != sentinel) {
+                testNode = testNode.next;
+                System.out.print(testNode.item);
+                System.out.print(" ");
+            }
+        }
+    }
+
+    @Override
+    public T removeFirst() {
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            size -= 1;
+            T firstItem = sentinel.next.item;
+            sentinel.next = null;
+            sentinel.prev = null;
+            return firstItem;
+        } else {
+            size -= 1;
+            T firstItem = sentinel.next.item;
+            sentinel.next.next.prev = sentinel;
+            sentinel.next = sentinel.next.next;
+            return firstItem;
+        }
+    }
+
+    @Override
+    public T removeLast() {
+        if (size == 0) {
+            return null;
+        } else if (size == 1) {
+            size -= 1;
+            T lastItem = sentinel.prev.item;
+            sentinel.next = null;
+            sentinel.prev = null;
+            return lastItem;
+        } else {
+            size -= 1;
+            T lastItem = sentinel.prev.item;
+            sentinel.prev.prev.next = sentinel;
+            sentinel.prev = sentinel.prev.prev;
+            return lastItem;
+        }
+    }
+
+    @Override
+    //get the ith item using iteration
+    public T get(int index) {
+        IntNode testNode = sentinel;
+        int count = 0;
+
+        while (testNode.next != sentinel) {
+            testNode = testNode.next;
+            if (count == index) {
+                return testNode.item;
+            }
+            count += 1;
+        }
+        return null;
+    }
+
+
+    //get the ith item using recursion
+    public T getRecursive(int index) {
+        if (index > (size - 1)) {
+            return null;
+        }
+        if (index == 0) {
+            return sentinel.next.item;
+        }
+
+        //make a copy of the current object
+        LinkedListDeque<T> tempLLDeque = new LinkedListDeque<>();
+        tempLLDeque.size = size - 1;
+        tempLLDeque.sentinel.next = sentinel.next.next;
+        return tempLLDeque.getRecursive(index - 1);
+    }
+}
