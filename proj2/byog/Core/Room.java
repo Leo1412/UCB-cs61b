@@ -4,6 +4,7 @@ import byog.TileEngine.TETile;
 import byog.lab5.Position;
 import byog.TileEngine.Tileset;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Room {
@@ -12,9 +13,11 @@ public class Room {
     public int w;
     public int h;
     public Position p; //lower left corner of the room
+    public int ExitNo = 0;
 
     private TETile wall = Tileset.WALL;
     private TETile floor = Tileset.FLOOR;
+
 
 
     public Room(TETile[][] map, int width, int height, Position pos) {
@@ -58,5 +61,57 @@ public class Room {
         Position pR = new Position(p.x + w + 1, p.y);
         DrawVerticalLine(h + 2, pR, wall);
 
+    }
+
+    //p1, p2 are the end points on the same line(vertical or horizontal), p3 and p4 are on the same line(v or h)
+    //assume two lines are either adjacent vertically or horizontally, this method aims to return the overlap positions, if any
+    //(p1, p2)
+    //(p3, p4)
+    public ArrayList<Position> isLineOverlap(Position p1, Position p2, Position p3, Position p4) {
+        ArrayList<Position> OverlapPos = new ArrayList<>();
+        if(p1.y == p2.y) {
+            for (int i = 1; i < (p2.x - p1.x - 1); i++) {
+                if(((p1.x + i) < p4.x) && ((p1.x + i) > p3.x)) {
+                    OverlapPos.add(new Position(p1.x + i, p1.y));
+                }
+            }
+        } else {
+            for (int i = 1; i < (p2.y - p1.y - 1); i++) {
+
+                if(((p1.y + i) < p4.y) && ((p1.y + i) > p3.y)) {
+                    OverlapPos.add(new Position(p1.x, p1.y + i));
+                }
+
+        }
+    }
+        return OverlapPos;
+    }
+
+    //determine whether two rooms are adjacent
+    public ArrayList<Position> isAdjacent(Room BRoom) {
+        ArrayList<Position> OverlapPos = new ArrayList<>();
+        //x range: [p.x, xExtreme1]
+        //y range: [p.y, yExtreme1]
+        int xExtreme1 = p.x + w + 1;
+        int yExtreme1 = p.y + h + 1;
+        //BRoom x range: [BRoom.p.x, xExtreme2]
+        //BRoom y range: [BRoom.p.y, yExtreme2]
+        int xExtreme2 = BRoom.p.x + BRoom.w + 1;
+        int yExtreme2 = BRoom.p.y + BRoom.h + 1;
+
+        if(BRoom.p.x == (xExtreme1 + 1)) {
+            //right
+            OverlapPos = isLineOverlap(new Position(xExtreme1, p.y), new Position(xExtreme1, yExtreme1), BRoom.p, new Position(BRoom.p.x, yExtreme2));
+        } else if(p.x == (xExtreme2 + 1)) {
+            //left
+            OverlapPos = isLineOverlap(p, new Position(p.x, yExtreme1), new Position(xExtreme2, BRoom.p.y), new Position(xExtreme2, yExtreme2));
+        } else if(BRoom.p.y == (yExtreme1 + 1)) {
+            //up
+            OverlapPos = isLineOverlap(new Position(p.x, yExtreme1), new Position(xExtreme1, yExtreme1), BRoom.p, new Position(xExtreme2, BRoom.p.y));
+        } else if(p.y == (yExtreme2 + 1)) {
+            //down
+            OverlapPos = isLineOverlap(p, new Position(xExtreme1, p.y), new Position(BRoom.p.x, yExtreme2), new Position(xExtreme2, yExtreme2));
+        }
+        return OverlapPos;
     }
 }
