@@ -28,9 +28,8 @@ public class Main {
 
 
     public static void main(String[] args) {
-        MapGenerator testMapGenerator = new MapGenerator(1501);
+        MapGenerator testMapGenerator = new MapGenerator(1412);
         TETile[][] worldState = testMapGenerator.frame();
     }
-
 
 }

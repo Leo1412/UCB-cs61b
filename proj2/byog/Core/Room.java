@@ -70,7 +70,7 @@ public class Room {
     public ArrayList<Position> isLineOverlap(Position p1, Position p2, Position p3, Position p4) {
         ArrayList<Position> OverlapPos = new ArrayList<>();
         if(p1.y == p2.y) {
-            for (int i = 1; i < (p2.x - p1.x - 1); i++) {
+            for (int i = 1; i < (p2.x - p1.x); i++) {
                 if(((p1.x + i) < p4.x) && ((p1.x + i) > p3.x)) {
                     OverlapPos.add(new Position(p1.x + i, p1.y));
                 }
