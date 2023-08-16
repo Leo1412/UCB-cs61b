@@ -5,6 +5,7 @@ import byog.lab5.Position;
 import byog.TileEngine.Tileset;
 
 import java.util.ArrayList;
+import java.lang.Math;
 import java.util.Map;
 
 public class Room {
@@ -64,7 +65,7 @@ public class Room {
     }
 
     //p1, p2 are the end points on the same line(vertical or horizontal), p3 and p4 are on the same line(v or h)
-    //assume two lines are either adjacent vertically or horizontally, this method aims to return the overlap positions, if any
+    //assume two lines are either adjacent vertically or horizontally, this method aims to return the overlapping positions, if any
     //(p1, p2)
     //(p3, p4)
     public ArrayList<Position> isLineOverlap(Position p1, Position p2, Position p3, Position p4) {
@@ -76,12 +77,11 @@ public class Room {
                 }
             }
         } else {
-            for (int i = 1; i < (p2.y - p1.y - 1); i++) {
+            for (int i = 1; i < (p2.y - p1.y); i++) {
 
                 if(((p1.y + i) < p4.y) && ((p1.y + i) > p3.y)) {
                     OverlapPos.add(new Position(p1.x, p1.y + i));
                 }
-
         }
     }
         return OverlapPos;
@@ -114,4 +114,88 @@ public class Room {
         }
         return OverlapPos;
     }
+
+
+    //1-right, rotating counter-clockwise
+    public int[] distanceTo(Room BRoom) {
+        Position p1 = new Position(p.x + w + 1, p.y);
+        Position p2 = new Position(p.x, p.y + h + 1);
+
+        Position p3 = new Position(BRoom.p.x + BRoom.w + 1, BRoom.p.y);
+        Position p4 = new Position(BRoom.p.x, BRoom.p.y + BRoom.h + 1);
+        int[] resultArr = new int[2];
+
+        if(isLineOverlap(p, p1, BRoom.p, p3).size() != 0) {
+            if(p.y > BRoom.p.y) {
+                resultArr[0] = 7;
+                resultArr[1] = p.y - BRoom.p.y - BRoom.h - 1 - 1;
+                return resultArr;
+            } else{
+                resultArr[0] = 3;
+                resultArr[1] = BRoom.p.y - p.y - h -1 -1;
+                return resultArr;
+            }
+        } else if(isLineOverlap(p, p2, BRoom.p, p4).size() != 0) {
+            if(p.x > BRoom.p.x) {
+                resultArr[0] = 5;
+                resultArr[1] = p.x - BRoom.p.x - BRoom.w - 1 -1;
+                return resultArr;
+            } else{
+                resultArr[0] = 1;
+                resultArr[1] = BRoom.p.x - p.x - w - 1 - 1;
+                return resultArr;
+            }
+        } else {
+            //return this.distanceTo2(BRoom);
+            if(p.x < BRoom.p.x) {
+                if(p.y < BRoom.p.y) {
+                    resultArr[0] = 2;
+                    resultArr[1] = Math.max(BRoom.p.y - p.y - h - 1 - 1, 0) + Math.max(BRoom.p.x - p.x - w - 1 - 1, 0);
+                    return resultArr;
+                } else{
+                    resultArr[0] = 8;
+                    resultArr[1] = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0) + Math.max(BRoom.p.x - p.x - w - 1 - 1, 0);
+                    return resultArr;
+                }
+            } else{
+                if(p.y < BRoom.p.y) {
+                    resultArr[0] = 4;
+                    resultArr[1] = Math.max(BRoom.p.y - p.y - h - 1 - 1, 0) + Math.max(p.x - BRoom.p.x - BRoom.w - 1 - 1, 0);
+                    return resultArr;
+                } else{
+                    resultArr[0] = 6;
+                    resultArr[1] = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0) + Math.max(p.x - BRoom.p.x - BRoom.w - 1 - 1, 0);
+                    return resultArr;
+                }
+            }
+        }
+        }
+
+        /*
+    public int[] distanceTo2(Room BRoom) {
+        int[] resultArr = new int[2];
+        if(p.x < BRoom.p.x) {
+            if(p.y < BRoom.p.y) {
+                resultArr[0] = 2;
+                resultArr[1] = (BRoom.p.y - p.y - h - 1 - 1) + (BRoom.p.x - p.x - w - 1 - 1);
+                return resultArr;
+            } else{
+                resultArr[0] = 8;
+                resultArr[1] = (p.y - BRoom.p.y - BRoom.h - 1 + 1) + (BRoom.p.x - p.x - w - 1 - 1);
+                return resultArr;
+            }
+        } else{
+            if(p.y < BRoom.p.y) {
+                resultArr[0] = 4;
+                resultArr[1] = (BRoom.p.y - p.y - h - 1 - 1) + (p.x - BRoom.p.x - BRoom.w - 1 - 1);
+                return resultArr;
+            } else{
+                resultArr[0] = 6;
+                resultArr[1] = (p.y - BRoom.p.y - BRoom.h - 1 + 1) + (p.x - BRoom.p.x - BRoom.w - 1 - 1);
+                return resultArr;
+            }
+        }
+    }
+         */
 }
+
