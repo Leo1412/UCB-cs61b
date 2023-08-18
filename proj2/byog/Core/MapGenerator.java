@@ -396,7 +396,7 @@ public class MapGenerator {
 
                 case 6:
                     int xDistance6 = Math.max(ThisRoom.p.x - closestRoomTot.p.x - closestRoomTot.w - 1 - 1, 0);
-                    int yDistance6 = Math.max(ThisRoom.p.y - closestRoomTot.p.y - closestRoomTot.h - 1 + 1, 0);
+                    int yDistance6 = Math.max(ThisRoom.p.y - closestRoomTot.p.y - closestRoomTot.h - 1 - 1, 0);
                     if (ThisRoom.p.y >= (closestRoomTot.p.y + closestRoomTot.h + 2)) {
                         yDistance6 += 2;
                     } else if (ThisRoom.p.y == (closestRoomTot.p.y + closestRoomTot.h + 1)) {
@@ -420,7 +420,7 @@ public class MapGenerator {
                     break;
                 case 8:
                     int xDistance8 = Math.max(closestRoomTot.p.x - ThisRoom.p.x - ThisRoom.w - 1 - 1, 0);
-                    int yDistance8 = Math.max(ThisRoom.p.y - closestRoomTot.p.y - ThisRoom.h - 1 + 1, 0);
+                    int yDistance8 = Math.max(ThisRoom.p.y - closestRoomTot.p.y - ThisRoom.h - 1 - 1, 0);
                     if (ThisRoom.p.y >= (closestRoomTot.p.y + closestRoomTot.h + 2)) {
                         yDistance8 += 2;
                     } else if (ThisRoom.p.y == (closestRoomTot.p.y + closestRoomTot.h + 1)) {

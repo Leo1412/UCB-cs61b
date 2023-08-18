@@ -160,7 +160,7 @@ public class Room {
                     return resultArr;
                 } else{
                     resultArr[0] = 8;
-                    int yDistance = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0);
+                    int yDistance = Math.max(p.y - BRoom.p.y - BRoom.h - 1 - 1, 0);
                     int xDistance = Math.max(BRoom.p.x - p.x - w - 1 - 1, 0);
                     if ((xDistance == 0) || (yDistance == 0)) {
                         resultArr[1] = yDistance + xDistance + 2;
@@ -182,7 +182,7 @@ public class Room {
                     return resultArr;
                 } else{
                     resultArr[0] = 6;
-                    int yDistance = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0);
+                    int yDistance = Math.max(p.y - BRoom.p.y - BRoom.h - 1 - 1, 0);
                     int xDistance = Math.max(p.x - BRoom.p.x - BRoom.w - 1 - 1, 0);
                     if ((xDistance == 0) || (yDistance == 0)) {
                         resultArr[1] = yDistance + xDistance + 2;
