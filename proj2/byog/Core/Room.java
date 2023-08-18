@@ -150,52 +150,49 @@ public class Room {
             if(p.x < BRoom.p.x) {
                 if(p.y < BRoom.p.y) {
                     resultArr[0] = 2;
-                    resultArr[1] = Math.max(BRoom.p.y - p.y - h - 1 - 1, 0) + Math.max(BRoom.p.x - p.x - w - 1 - 1, 0);
+                    int yDistance = Math.max(BRoom.p.y - p.y - h - 1 - 1, 0);
+                    int xDistance = Math.max(BRoom.p.x - p.x - w - 1 - 1, 0);
+                    if ((xDistance == 0) || (yDistance == 0)) {
+                        resultArr[1] = yDistance + xDistance + 2;
+                    } else {
+                        resultArr[1] = yDistance + xDistance;
+                    }
                     return resultArr;
                 } else{
                     resultArr[0] = 8;
-                    resultArr[1] = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0) + Math.max(BRoom.p.x - p.x - w - 1 - 1, 0);
+                    int yDistance = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0);
+                    int xDistance = Math.max(BRoom.p.x - p.x - w - 1 - 1, 0);
+                    if ((xDistance == 0) || (yDistance == 0)) {
+                        resultArr[1] = yDistance + xDistance + 2;
+                    } else {
+                        resultArr[1] = yDistance + xDistance;
+                    }
                     return resultArr;
                 }
             } else{
                 if(p.y < BRoom.p.y) {
                     resultArr[0] = 4;
-                    resultArr[1] = Math.max(BRoom.p.y - p.y - h - 1 - 1, 0) + Math.max(p.x - BRoom.p.x - BRoom.w - 1 - 1, 0);
+                    int yDistance = Math.max(BRoom.p.y - p.y - h - 1 - 1, 0);
+                    int xDistance = Math.max(p.x - BRoom.p.x - BRoom.w - 1 - 1, 0);
+                    if ((xDistance == 0) || (yDistance == 0)) {
+                        resultArr[1] = yDistance + xDistance + 2;
+                    } else {
+                        resultArr[1] = yDistance + xDistance;
+                    }
                     return resultArr;
                 } else{
                     resultArr[0] = 6;
-                    resultArr[1] = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0) + Math.max(p.x - BRoom.p.x - BRoom.w - 1 - 1, 0);
+                    int yDistance = Math.max(p.y - BRoom.p.y - BRoom.h - 1 + 1, 0);
+                    int xDistance = Math.max(p.x - BRoom.p.x - BRoom.w - 1 - 1, 0);
+                    if ((xDistance == 0) || (yDistance == 0)) {
+                        resultArr[1] = yDistance + xDistance + 2;
+                    } else {
+                        resultArr[1] = yDistance + xDistance;
+                    }
                     return resultArr;
                 }
             }
         }
         }
-
-        /*
-    public int[] distanceTo2(Room BRoom) {
-        int[] resultArr = new int[2];
-        if(p.x < BRoom.p.x) {
-            if(p.y < BRoom.p.y) {
-                resultArr[0] = 2;
-                resultArr[1] = (BRoom.p.y - p.y - h - 1 - 1) + (BRoom.p.x - p.x - w - 1 - 1);
-                return resultArr;
-            } else{
-                resultArr[0] = 8;
-                resultArr[1] = (p.y - BRoom.p.y - BRoom.h - 1 + 1) + (BRoom.p.x - p.x - w - 1 - 1);
-                return resultArr;
-            }
-        } else{
-            if(p.y < BRoom.p.y) {
-                resultArr[0] = 4;
-                resultArr[1] = (BRoom.p.y - p.y - h - 1 - 1) + (p.x - BRoom.p.x - BRoom.w - 1 - 1);
-                return resultArr;
-            } else{
-                resultArr[0] = 6;
-                resultArr[1] = (p.y - BRoom.p.y - BRoom.h - 1 + 1) + (p.x - BRoom.p.x - BRoom.w - 1 - 1);
-                return resultArr;
-            }
-        }
-    }
-         */
 }
 

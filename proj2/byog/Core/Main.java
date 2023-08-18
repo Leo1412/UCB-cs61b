@@ -28,7 +28,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        MapGenerator testMapGenerator = new MapGenerator(1412);
+        MapGenerator testMapGenerator = new MapGenerator(1419);
         TETile[][] worldState = testMapGenerator.frame();
     }
 
