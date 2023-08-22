@@ -30,23 +30,56 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
-        // and return a 2D tile representation of the world that would have been
-        // drawn if the same inputs had been given to playWithKeyboard().
-
+        /*
         //ensure the input is in the format of "NxxxxS".
-        if ((input.charAt(0) != 'N') || (input.charAt(0) != 'n')) {
+        if ((input.charAt(0) != 'N') && (input.charAt(0) != 'n')) {
             System.exit(0);
             return null;
-        } else if ((input.charAt(input.length() - 1) != 'S') || (input.charAt(input.length() - 1) != 's')) {
+        } else if ((input.charAt(input.length() - 1) != 'S') && (input.charAt(input.length() - 1) != 's')) {
             System.exit(0);
             return null;
         }
-        //get the seed for generating the random world.
-        int seed = Integer.valueOf(input.substring(1, input.length() - 1));
+         */
+        char firstChar = input.charAt(0);
+        TETile[][] finalWorldFrame = null;
+        int commandIdx = 0;
+        switch(firstChar) {
+            case 'n':
+            case 'N':
+                String seedStr = new String("");
+                long seed;
+                for (int i = 1; i < input.length(); i++) {
+                    char nextChar = input.charAt(i);
+                    int nextCharInt = Character.getNumericValue(nextChar);
+                    if (nextCharInt <= 9 && nextCharInt >= 0) {
+                        seedStr += nextChar;
+                    } else {
+                        commandIdx = i + 1;
+                        break;
+                    }
+                }
+                seed = Long.parseLong(seedStr, 10);
+                MapGenerator randomMap = new MapGenerator(seed);
+                finalWorldFrame = randomMap.frame();
+                Entity e = new Entity(finalWorldFrame, randomMap.entityStartPos());
 
-        MapGenerator randomMap = new MapGenerator(seed);
-        TETile[][] finalWorldFrame = randomMap.frame();
+                for (int j = commandIdx; j < input.length(); j++) {
+                    char currentCommand = input.charAt(j);
+                    if (currentCommand != 'Q' && currentCommand != 'q') {
+                        e.moveEntity(currentCommand);
+                        e.drawWorld();
+                    } else {
+                        //to be implemented (quit and save)
+                    }
+                }
+                break;
+            case 'l':
+            case 'L':
+                //to be implemented (load the saved game)
+                break;
+        }
+
+        //return the world frame
         return finalWorldFrame;
     }
 }

@@ -9,7 +9,7 @@ import java.util.Map;
  *  in either keyboard or input string mode.
  */
 public class Main {
-    /*
+
     public static void main(String[] args) {
         if (args.length > 1) {
             System.out.println("Can only have one argument - the input string");
@@ -24,12 +24,13 @@ public class Main {
         }
     }
 
-     */
 
 
+    /*
     public static void main(String[] args) {
-        MapGenerator testMapGenerator = new MapGenerator(1418);
+        MapGenerator testMapGenerator = new MapGenerator(1412);
         TETile[][] worldState = testMapGenerator.frame();
     }
+     */
 
 }
