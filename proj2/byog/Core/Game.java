@@ -2,8 +2,16 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Map;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -11,10 +19,127 @@ public class Game {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
 
+    private boolean isQuit = false;
+
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        char playerChoice;
+        String seedStr = new String("");
+        long seed;
+
+        StdDraw.setCanvasSize(this.WIDTH * 16, this.HEIGHT * 16);
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setXscale(0, this.WIDTH);
+        StdDraw.setYscale(0, this.HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+
+        //generate the intro page of the game
+        drawFrame();
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                playerChoice = StdDraw.nextKeyTyped();
+                break;
+            }
+        }
+
+        switch (playerChoice) {
+            case 'n':
+            case 'N':
+                StdDraw.clear(Color.black);
+                StdDraw.setPenColor(Color.white);
+                StdDraw.setFont(font);
+                StdDraw.text(WIDTH/2, HEIGHT/2, "Input your seed: ", 0);
+                StdDraw.show();
+                while (true) {
+                    if (StdDraw.hasNextKeyTyped()) {
+                        char numChar = StdDraw.nextKeyTyped();
+                        int num = Character.getNumericValue(numChar);
+                        if (num <= 9 && num >= 0) {
+                            seedStr += numChar;
+                            StdDraw.clear(Color.black);
+                            StdDraw.text(WIDTH/2, HEIGHT/2, "Input your seed: " + seedStr, 0);
+                            StdDraw.show();
+                        } else if (numChar == 's' || numChar == 'S') {
+                            break;
+                        }
+                    }
+                }
+                seed = Long.parseLong(seedStr, 10);
+                MapGenerator randomMap = new MapGenerator(seed);
+                while (true) {
+                    if (StdDraw.hasNextKeyTyped()) {
+                        char command = StdDraw.nextKeyTyped();
+                        if (command != 'q' && command != 'Q') {
+                            randomMap.moveEntity(command);
+                            randomMap.updateWorld();
+                        } else {
+                            isQuit = true;
+                            break;
+                        }
+                    }
+                }
+                saveMap(randomMap);
+                break;
+            case 'l':
+            case 'L':
+                MapGenerator savedMap = loadSavedMap();
+                savedMap.drawWorld();
+                while (true) {
+                    if (StdDraw.hasNextKeyTyped()) {
+                        char command = StdDraw.nextKeyTyped();
+                        if (command != 'q' && command != 'Q') {
+                            savedMap.moveEntity(command);
+                            savedMap.updateWorld();
+                        } else {
+                            isQuit = true;
+                            break;
+                        }
+                    }
+                }
+                saveMap(savedMap);
+                break;
+            case 'q':
+            case 'Q':
+                isQuit = true;
+                break;
+        }
+    }
+
+    public void drawFrame() {
+        StdDraw.clear(Color.black);
+        Font font_1 = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.setFont(font_1);
+        StdDraw.text(WIDTH/2, HEIGHT * 3/4, "CS61B: THE GAME", 0);
+        Font font_2 = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(font_2);
+        StdDraw.text(WIDTH/2, HEIGHT/2, "New Game (N)", 0);
+        StdDraw.text(WIDTH/2, HEIGHT/2 - 2, "Load Game (L)", 0);
+        StdDraw.text(WIDTH/2, HEIGHT/2 - 4, "Quit (Q)", 0);
+
+        StdDraw.show();
+    }
+
+    public void saveMap(MapGenerator inputGenerator) {
+        //quit and save
+        String fileName = "file.ser";
+        try {
+            //save the object in a file
+            FileOutputStream file = new FileOutputStream(fileName);
+            ObjectOutputStream out = new ObjectOutputStream(file);
+
+            //serialization
+            out.writeObject(inputGenerator);
+            out.close();
+            file.close();
+        } catch (IOException ex) {
+            System.out.println("IOException is caught.");
+            System.out.println(ex);
+        }
     }
 
     /**
@@ -30,16 +155,6 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        /*
-        //ensure the input is in the format of "NxxxxS".
-        if ((input.charAt(0) != 'N') && (input.charAt(0) != 'n')) {
-            System.exit(0);
-            return null;
-        } else if ((input.charAt(input.length() - 1) != 'S') && (input.charAt(input.length() - 1) != 's')) {
-            System.exit(0);
-            return null;
-        }
-         */
         char firstChar = input.charAt(0);
         TETile[][] finalWorldFrame = null;
         int commandIdx = 0;
@@ -61,25 +176,86 @@ public class Game {
                 seed = Long.parseLong(seedStr, 10);
                 MapGenerator randomMap = new MapGenerator(seed);
                 finalWorldFrame = randomMap.frame();
-                Entity e = new Entity(finalWorldFrame, randomMap.entityStartPos());
-
-                for (int j = commandIdx; j < input.length(); j++) {
-                    char currentCommand = input.charAt(j);
-                    if (currentCommand != 'Q' && currentCommand != 'q') {
-                        e.moveEntity(currentCommand);
-                        e.drawWorld();
-                    } else {
-                        //to be implemented (quit and save)
-                    }
-                }
-                break;
+                handleInput(input, randomMap, commandIdx);
+                return finalWorldFrame;
+                //break;
             case 'l':
             case 'L':
-                //to be implemented (load the saved game)
-                break;
+                MapGenerator savedMap = loadSavedMap();
+                finalWorldFrame = savedMap.frame();
+                savedMap.drawWorld();
+                handleInput(input, savedMap, 1);
+                //return the world frame
+                return finalWorldFrame;
+        }
+        return null;
+    }
+
+
+    //method to parse the input (including the motion command and the quit statement)
+    public void handleInput(String input, MapGenerator inputGenerator, int commandIdx) {
+        for (int j = commandIdx; j < input.length(); j++) {
+            char currentCommand = input.charAt(j);
+            if (currentCommand != 'Q' && currentCommand != 'q') {
+                inputGenerator.moveEntity(currentCommand);
+                inputGenerator.updateWorld();
+            } else {
+                //quit and save
+                StdDraw.pause(1000);
+                String fileName = "file.ser";
+                    try {
+                        //save the object in a file
+                        FileOutputStream file = new FileOutputStream(fileName);
+                        ObjectOutputStream out = new ObjectOutputStream(file);
+
+                        //serialization
+                        out.writeObject(inputGenerator);
+                        out.close();
+                        file.close();
+                    } catch (IOException ex) {
+                        System.out.println("IOException is caught.");
+                        System.out.println(ex);
+                    }
+                    isQuit = true;
+            }
+        }
+    }
+
+    //method to load the previously saved map
+    public MapGenerator loadSavedMap() {
+        //load the saved game
+        MapGenerator savedMap = null;
+        String filename = "file.ser";
+        // Deserialization
+        try
+        {
+            // Reading the object from a file
+            FileInputStream file = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(file);
+
+            // Method for deserialization of object
+            savedMap = (MapGenerator) in.readObject();
+
+            in.close();
+            file.close();
         }
 
-        //return the world frame
-        return finalWorldFrame;
+        catch(IOException ex)
+        {
+            System.out.println("IOException is caught:");
+            System.out.print(ex);
+        }
+
+        catch(ClassNotFoundException ex)
+        {
+            System.out.println("ClassNotFoundException is caught");
+        }
+        return savedMap;
+    }
+
+    public boolean quitStatus() {
+        return isQuit;
     }
 }
+
+

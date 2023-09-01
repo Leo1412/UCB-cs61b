@@ -2,6 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TETile;
 
+import java.io.IOException;
 import java.util.Map;
 
 /** This is the main entry point for the program. This class simply parses
@@ -18,9 +19,15 @@ public class Main {
             Game game = new Game();
             TETile[][] worldState = game.playWithInputString(args[0]);
             System.out.println(TETile.toString(worldState));
+            if (game.quitStatus()) {
+                System.exit(0);
+            }
         } else {
             Game game = new Game();
             game.playWithKeyboard();
+            if (game.quitStatus()) {
+                System.exit(0);
+            }
         }
     }
 

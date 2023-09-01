@@ -9,9 +9,10 @@ import javax.annotation.processing.SupportedSourceVersion;
 import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.ArrayList;
+import java.io.*;
 
 
-public class MapGenerator {
+public class MapGenerator implements Serializable {
     static private long seed;
     final static private int WIDTH = 90;
     final static private int HEIGHT = 40;
@@ -29,14 +30,14 @@ public class MapGenerator {
     private TETile floor = Tileset.FLOOR;
     private TETile entity = Tileset.FLOWER;
 
+    // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
+    TERenderer ter = new TERenderer();
+
     public MapGenerator(long s) {
         seed = s;
         RANDOM = new Random(seed);
 
-        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-        TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-
         //background
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
@@ -307,5 +308,55 @@ public class MapGenerator {
             System.out.println(' ');
         }
     }
+
+    //method to move the entity controlled by player using W,A,S,D.
+    public void moveEntity(char command) {
+        switch(command) {
+            case 'w':
+            case 'W':
+                if (map[entityPos.x][entityPos.y + 1] != wall) {
+                    map[entityPos.x][entityPos.y] = floor;
+                    map[entityPos.x][entityPos.y + 1] = entity;
+                    entityPos.y += 1;
+                }
+                break;
+            case 'a':
+            case 'A':
+                if (map[entityPos.x - 1][entityPos.y] != wall) {
+                    map[entityPos.x][entityPos.y] = floor;
+                    map[entityPos.x - 1][entityPos.y] = entity;
+                    entityPos.x -= 1;
+                }
+                break;
+            case 'd':
+            case 'D':
+                if (map[entityPos.x + 1][entityPos.y] != wall) {
+                    map[entityPos.x][entityPos.y] = floor;
+                    map[entityPos.x + 1][entityPos.y] = entity;
+                    entityPos.x += 1;
+                }
+                break;
+            case 's':
+            case 'S':
+                if (map[entityPos.x][entityPos.y - 1] != wall) {
+                    map[entityPos.x][entityPos.y] = floor;
+                    map[entityPos.x][entityPos.y - 1] = entity;
+                    entityPos.y -= 1;
+                }
+                break;
+        }
+    }
+
+    //draw the updated world
+    public void updateWorld() {
+        ter.renderFrame(map);
+    }
+
+    //re-draw the saved world
+    public void drawWorld() {
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(map);
+    }
+
 }
 
