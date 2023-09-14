@@ -28,6 +28,8 @@ public class Game {
         char playerChoice;
         String seedStr = new String("");
         long seed;
+        boolean isWin = false;
+        boolean isLose = false;
 
         StdDraw.setCanvasSize(this.WIDTH * 16, this.HEIGHT * 16);
         Font font = new Font("Monaco", Font.BOLD, 30);
@@ -71,36 +73,70 @@ public class Game {
                 seed = Long.parseLong(seedStr, 10);
                 MapGenerator randomMap = new MapGenerator(seed);
                 while (true) {
+                    //HUD
+                    randomMap.showHUD();
                     if (StdDraw.hasNextKeyTyped()) {
                         char command = StdDraw.nextKeyTyped();
                         if (command != 'q' && command != 'Q') {
                             randomMap.moveEntity(command);
+                            isLose = randomMap.checkStatus();
+                            isWin = randomMap.isWin();
                             randomMap.updateWorld();
+                            if (isWin) {
+                                isQuit = true;
+                                drawFrame("Wow, you win!");
+                                StdDraw.pause(3000);
+                                break;
+                            }
+                            //if the player hits the wall for 3 times
+                            if (isLose) {
+                                isQuit = true;
+                                drawFrame("You Lose!");
+                                StdDraw.pause(3000);
+                                break;
+                            }
                         } else {
                             isQuit = true;
                             break;
                         }
                     }
                 }
-                saveMap(randomMap);
+                if (!isWin && !isLose) saveMap(randomMap);
                 break;
             case 'l':
             case 'L':
                 MapGenerator savedMap = loadSavedMap();
                 savedMap.drawWorld();
                 while (true) {
+                    //HUD
+                    savedMap.showHUD();
                     if (StdDraw.hasNextKeyTyped()) {
                         char command = StdDraw.nextKeyTyped();
                         if (command != 'q' && command != 'Q') {
                             savedMap.moveEntity(command);
+                            isLose = savedMap.checkStatus();
+                            isWin = savedMap.isWin();
                             savedMap.updateWorld();
+                            if (isWin) {
+                                isQuit = true;
+                                drawFrame("Wow, you win!");
+                                StdDraw.pause(3000);
+                                break;
+                            }
+                            //if the player hits the wall for 3 times
+                            if (isLose) {
+                                isQuit = true;
+                                drawFrame("You Lose!");
+                                StdDraw.pause(3000);
+                                break;
+                            }
                         } else {
                             isQuit = true;
                             break;
                         }
                     }
                 }
-                saveMap(savedMap);
+                if (!isWin && !isLose) saveMap(savedMap);
                 break;
             case 'q':
             case 'Q':
@@ -121,6 +157,15 @@ public class Game {
         StdDraw.text(WIDTH/2, HEIGHT/2 - 2, "Load Game (L)", 0);
         StdDraw.text(WIDTH/2, HEIGHT/2 - 4, "Quit (Q)", 0);
 
+        StdDraw.show();
+    }
+
+    public void drawFrame(String s) {
+        StdDraw.clear(Color.black);
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.setFont(font);
+        StdDraw.text(WIDTH * 3 / 5, HEIGHT * 3 / 5, s, 0);
         StdDraw.show();
     }
 

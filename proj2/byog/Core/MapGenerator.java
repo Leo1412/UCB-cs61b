@@ -6,10 +6,14 @@ import byog.TileEngine.Tileset;
 import byog.lab5.Position;
 
 import javax.annotation.processing.SupportedSourceVersion;
+import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.ArrayList;
 import java.io.*;
+import edu.princeton.cs.introcs.StdDraw;
+import java.lang.Math;
+
 
 
 public class MapGenerator implements Serializable {
@@ -24,11 +28,14 @@ public class MapGenerator implements Serializable {
     RoomManager manager = new RoomManager(WIDTH, HEIGHT);
 
     Position entityPos = new Position(0,0);
-
+    Position desPos = new Position(0, 0);
+    private int prevNo = 0; //previous number of times the player hits the wall
+    private int hitNo = 0; //number of times the player hits the wall
 
     private TETile wall = Tileset.WALL;
     private TETile floor = Tileset.FLOOR;
     private TETile entity = Tileset.FLOWER;
+    private TETile destination = Tileset.MOUNTAIN;
 
     // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
     TERenderer ter = new TERenderer();
@@ -66,7 +73,7 @@ public class MapGenerator implements Serializable {
         int no1;
         int no2;
         int no3;
-        do{
+        do {
         no1 = (int)RandomUtils.gaussian(RANDOM, 15, 1);
         no2 = (int)RandomUtils.gaussian(RANDOM, 15, 1);
         no3 = (int)RandomUtils.gaussian(RANDOM, 15, 1);
@@ -99,6 +106,11 @@ public class MapGenerator implements Serializable {
                 //finalH = (int) RandomUtils.gaussian(RANDOM, 5, 1);
                 finalW = RandomUtils.uniform(RANDOM, 4, 10);
                 finalH = RandomUtils.uniform(RANDOM, 4, 10);
+                //reserve the top line for displaying HUD
+                if (PointList.get(z).y + finalH == HEIGHT - 1) {
+                    isKeep = false;
+                    break;
+                }
                 NewRoom = new Room(map, finalW, finalH, PointList.get(z));
                 no += 1;
             } while((manager.isOverlap(NewRoom) || manager.isOutOfBound(NewRoom)));
@@ -109,9 +121,7 @@ public class MapGenerator implements Serializable {
                 NewRoom.GenerateRoom();
                 RoomList.add(NewRoom);
             }
-
         }
-
     }
 
 
@@ -277,6 +287,8 @@ public class MapGenerator implements Serializable {
         //draw the initial position of the entity
         int entityX = 0;
         int entityY = 0;
+        int desX = 0;
+        int desY = 0;
         while (true) {
             entityX = RANDOM.nextInt(WIDTH);
             entityY = RANDOM.nextInt(HEIGHT);
@@ -284,6 +296,16 @@ public class MapGenerator implements Serializable {
                 map[entityX][entityY] = entity;
                 entityPos.x = entityX;
                 entityPos.y = entityY;
+                break;
+            }
+        }
+        while (true) {
+            desX = RANDOM.nextInt(WIDTH);
+            desY = RANDOM.nextInt(HEIGHT);
+            if (map[desX][desY] == floor) {
+                map[desX][desY] = destination;
+                desPos.x = desX;
+                desPos.y = desY;
                 break;
             }
         }
@@ -298,17 +320,6 @@ public class MapGenerator implements Serializable {
     }
 
 
-    //for checking the points generation
-    public void printPoints() {
-        System.out.println("the total number of points: " + Integer.toString(PointList.size()));
-        for (int i = 0; i < PointList.size(); i++) {
-            System.out.print(PointList.get(i).x);
-            System.out.print(' ');
-            System.out.print(PointList.get(i).y);
-            System.out.println(' ');
-        }
-    }
-
     //method to move the entity controlled by player using W,A,S,D.
     public void moveEntity(char command) {
         switch(command) {
@@ -318,6 +329,8 @@ public class MapGenerator implements Serializable {
                     map[entityPos.x][entityPos.y] = floor;
                     map[entityPos.x][entityPos.y + 1] = entity;
                     entityPos.y += 1;
+                } else {
+                    hitNo += 1;
                 }
                 break;
             case 'a':
@@ -326,6 +339,8 @@ public class MapGenerator implements Serializable {
                     map[entityPos.x][entityPos.y] = floor;
                     map[entityPos.x - 1][entityPos.y] = entity;
                     entityPos.x -= 1;
+                } else {
+                    hitNo += 1;
                 }
                 break;
             case 'd':
@@ -334,6 +349,8 @@ public class MapGenerator implements Serializable {
                     map[entityPos.x][entityPos.y] = floor;
                     map[entityPos.x + 1][entityPos.y] = entity;
                     entityPos.x += 1;
+                } else {
+                    hitNo += 1;
                 }
                 break;
             case 's':
@@ -342,9 +359,39 @@ public class MapGenerator implements Serializable {
                     map[entityPos.x][entityPos.y] = floor;
                     map[entityPos.x][entityPos.y - 1] = entity;
                     entityPos.y -= 1;
+                } else {
+                    hitNo += 1;
                 }
                 break;
         }
+    }
+
+    //check the current game status
+    public boolean checkStatus() {
+        if (hitNo == 3) return true;
+        int entityX = 0;
+        int entityY = 0;
+        if (hitNo != prevNo) {
+            prevNo = hitNo;
+            map[entityPos.x][entityPos.y] = floor;
+            while (true) {
+                entityX = RANDOM.nextInt(WIDTH);
+                entityY = RANDOM.nextInt(HEIGHT);
+                if (map[entityX][entityY] == floor) {
+                    map[entityX][entityY] = entity;
+                    entityPos.x = entityX;
+                    entityPos.y = entityY;
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    //check whether the player wins
+    public boolean isWin() {
+        if (entityPos.x == desPos.x && entityPos.y == desPos.y) return true;
+        return false;
     }
 
     //draw the updated world
@@ -358,5 +405,45 @@ public class MapGenerator implements Serializable {
         ter.renderFrame(map);
     }
 
+    public void showHUD() {
+        int mouseX = (int)Math.floor(StdDraw.mouseX());
+        int mouseY = (int)Math.floor(StdDraw.mouseY());
+        Font font = new Font("Monaco", Font.BOLD, 15);
+        if (map[mouseX][mouseY] == wall) {
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.black);
+            StdDraw.filledRectangle(WIDTH/18, HEIGHT - 1, WIDTH / 18, 0.6);
+            StdDraw.setPenColor(Color.yellow);
+            StdDraw.text(WIDTH/18, HEIGHT - 1, "wall", 0);
+            StdDraw.show();
+        } else if (map[mouseX][mouseY] == floor) {
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.black);
+            StdDraw.filledRectangle(WIDTH/18, HEIGHT - 1, WIDTH / 18, 0.6);
+            StdDraw.setPenColor(Color.yellow);
+            StdDraw.text(WIDTH/18, HEIGHT - 1, "floor", 0);
+            StdDraw.show();
+        } else if (map[mouseX][mouseY] == entity) {
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.black);
+            StdDraw.filledRectangle(WIDTH/18, HEIGHT - 1, WIDTH / 18, 0.6);
+            StdDraw.setPenColor(Color.red);
+            StdDraw.text(WIDTH/18, HEIGHT - 1, "player", 0);
+            StdDraw.show();
+        } else if (map[mouseX][mouseY] == destination) {
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.black);
+            StdDraw.filledRectangle(WIDTH/18, HEIGHT - 1, WIDTH / 18, 0.6);
+            StdDraw.setPenColor(Color.green);
+            StdDraw.text(WIDTH/18, HEIGHT - 1, "destination", 0);
+            StdDraw.show();
+        }
+        else {
+            StdDraw.setFont(font);
+            StdDraw.setPenColor(Color.black);
+            StdDraw.filledRectangle(WIDTH/18, HEIGHT - 1, WIDTH / 18, 0.6);
+            StdDraw.show();
+        }
+    }
 }
 
